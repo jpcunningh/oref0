@@ -16,7 +16,6 @@ assert_cwd_contains_ini
 CGM="$(get_pref_string .cgm)"
 directory="$PWD"
 CGM_LOOPDIR="$(get_pref_string .cgm_loop_path)"
-ENABLE="$(get_pref_string .enable "")"
 BT_PEB="$(get_pref_string .bt_peb "")"
 BT_MAC="$(get_pref_string .bt_mac "")"
 PUSHOVER_TOKEN="$(get_pref_string .pushover_token "")"
@@ -61,7 +60,8 @@ find /var/log/openaps/pump-loop.log -mmin +5 | grep pump && (
 ) | tee -a /var/log/openaps/pump-loop.log &
 
 # if the rig doesn't recover after that, reboot:
-oref0-radio-reboot &
+# DEPRECATED WITH 0.7.0. See if we can do without
+# oref0-radio-reboot &
 
 if [[ ${CGM,,} =~ "g5-upload" ]]; then
     oref0-upload-entries &
@@ -86,8 +86,6 @@ elif [[ ${CGM,,} =~ "xdrip" ]]; then
     if ! is_process_running_named "monitor-xdrip"; then
         monitor-xdrip | tee -a /var/log/openaps/xdrip-loop.log &
     fi
-elif [[ $ENABLE =~ dexusb ]]; then
-    true
 elif ! [[ ${CGM,,} =~ "mdt" ]]; then # use nightscout for cgm
     if ! is_process_running_named "oref0-get-bg"; then
         (
