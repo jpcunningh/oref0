@@ -56,9 +56,15 @@ function get_ns_bg {
     if ! file_is_recent cgm/ns-glucose-24h.json 54 \
         || ! grep -c glucose cgm/ns-glucose-24h.json | jq -e '. > 36' >/dev/null; then
         nightscout ns $NIGHTSCOUT_HOST $API_SECRET oref0_glucose_since -24hours > cgm/ns-glucose-24h.json
+        echo Downloaded 24 hours of glucose - file:
+        ls -l cgm/ns-glucose-24h.json
     fi
     nightscout ns $NIGHTSCOUT_HOST $API_SECRET oref0_glucose_since -1hour > cgm/ns-glucose-1h.json
+    echo Downloaded 1 hours of glucose - file:
+    ls -l cgm/ns-glucose-1h.json
+
     jq -s '.[0] + .[1]|unique|sort_by(.date)|reverse' cgm/ns-glucose-24h.json cgm/ns-glucose-1h.json > cgm/ns-glucose.json
+
     glucose_fresh # update timestamp on cgm/ns-glucose.json
     # if ns-glucose.json data is <10m old, no more than 5m in the future, and valid (>38),
     # copy cgm/ns-glucose.json over to cgm/glucose.json if it's newer
@@ -95,6 +101,8 @@ function find_valid_ns_glucose {
 function ns_temptargets {
     #openaps report invoke settings/temptargets.json settings/profile.json >/dev/null
     nightscout ns $NIGHTSCOUT_HOST $API_SECRET temp_targets > settings/ns-temptargets.json.new
+    echo Downloaded 1 hours of glucose - file:
+    ls -l settings/ns-temptargets.json.new
     cat settings/ns-temptargets.json.new | jq .[0].duration | egrep -q [0-9] && mv settings/ns-temptargets.json.new settings/ns-temptargets.json
     # TODO: merge local-temptargets.json with ns-temptargets.json
     #openaps report invoke settings/ns-temptargets.json settings/profile.json
@@ -119,6 +127,9 @@ function ns_temptargets {
 function ns_meal_carbs {
     #openaps report invoke monitor/carbhistory.json >/dev/null
     nightscout ns $NIGHTSCOUT_HOST $API_SECRET carb_history > monitor/carbhistory.json.new
+    echo Downloaded carb history - file:
+    ls -l monitor/carbhistory.json.new
+
     cat monitor/carbhistory.json.new | jq .[0].carbs | egrep -q [0-9] && mv monitor/carbhistory.json.new monitor/carbhistory.json
     oref0-meal monitor/pumphistory-24h-zoned.json settings/profile.json monitor/clock-zoned.json monitor/glucose.json settings/basal_profile.json monitor/carbhistory.json > monitor/meal.json.new
     #grep -q COB monitor/meal.json.new && mv monitor/meal.json.new monitor/meal.json
