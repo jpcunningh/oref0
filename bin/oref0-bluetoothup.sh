@@ -20,7 +20,7 @@ if [ "$DEBUG" != "" ]; then
   EXECUTABLE="$EXECUTABLE -d -n"
 fi
 
-adapter=$(get_pref_string bt_hci) || adapter=0
+adapter=$(get_pref_string .bt_hci) || adapter=0
 
 
 # start bluetoothd if bluetoothd is not running
