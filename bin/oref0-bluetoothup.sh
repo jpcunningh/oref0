@@ -20,6 +20,9 @@ if [ "$DEBUG" != "" ]; then
   EXECUTABLE="$EXECUTABLE -d -n"
 fi
 
+adapter=$(get_pref_string bt_hci) || adapter=0
+
+
 # start bluetoothd if bluetoothd is not running
 if ! ( ps -fC bluetoothd >/dev/null ) ; then
    echo bluetoothd not running! Starting bluetoothd...
@@ -34,11 +37,11 @@ fi
 
 if ( hciconfig -a | grep -q "DOWN" ) ; then
    echo Bluetooth hci DOWN! Bringing it to UP.
-   sudo hciconfig hci0 up
+   sudo hciconfig hci${adapter} up
    sudo $EXECUTABLE 2>&1 | tee -a /var/log/openaps/bluetoothd.log &
 fi
 
 if !( hciconfig -a | grep -q $HOSTNAME ) ; then
    echo Bluetooth hci name does not match hostname: $HOSTNAME. Setting bluetooth hci name.
-   sudo hciconfig hci0 name $HOSTNAME
+   sudo hciconfig hci${adapter} name $HOSTNAME
 fi
