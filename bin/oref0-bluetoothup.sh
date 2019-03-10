@@ -29,19 +29,19 @@ if ! ( ps -fC bluetoothd >/dev/null ) ; then
    sudo $EXECUTABLE 2>&1 | tee -a /var/log/openaps/bluetoothd.log &
 fi
 
-if is_edison && ! ( hciconfig -a | grep -q "PSCAN" ) ; then
+if is_edison && ! ( hciconfig -a hci${adapter} | grep -q "PSCAN" ) ; then
    echo Bluetooth PSCAN not enabled! Restarting bluetoothd...
    sudo killall bluetoothd
    sudo $EXECUTABLE 2>&1 | tee -a /var/log/openaps/bluetoothd.log &
 fi
 
-if ( hciconfig -a | grep -q "DOWN" ) ; then
+if ( hciconfig -a hci${adapter} | grep -q "DOWN" ) ; then
    echo Bluetooth hci DOWN! Bringing it to UP.
    sudo hciconfig hci${adapter} up
    sudo $EXECUTABLE 2>&1 | tee -a /var/log/openaps/bluetoothd.log &
 fi
 
-if !( hciconfig -a | grep -q $HOSTNAME ) ; then
+if !( hciconfig -a hci${adapter} | grep -q $HOSTNAME ) ; then
    echo Bluetooth hci name does not match hostname: $HOSTNAME. Setting bluetooth hci name.
    sudo hciconfig hci${adapter} name $HOSTNAME
 fi
