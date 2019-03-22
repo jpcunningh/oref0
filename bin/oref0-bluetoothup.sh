@@ -7,6 +7,8 @@ Usage: $self
 Attempt to establish a Bluetooth tethering connection.
 EOT
 
+adapter=$(get_pref_string .bt_hci 2>/dev/null) || adapter=0
+
 DAEMON_PATHS=(/usr/local/bin/bluetoothd /usr/libexec/bluetooth/bluetoothd /usr/sbin/bluetoothd)
 
 for EXEC_PATH in ${DAEMON_PATHS[@]}; do
@@ -19,8 +21,6 @@ done
 if [ "$DEBUG" != "" ]; then
   EXECUTABLE="$EXECUTABLE -d -n"
 fi
-
-adapter=$(get_pref_string .bt_hci) || adapter=0
 
 # start bluetoothd if bluetoothd is not running
 if ! ( ps -fC bluetoothd >/dev/null ) ; then
