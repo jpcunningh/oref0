@@ -22,7 +22,6 @@ fi
 
 adapter=$(get_pref_string .bt_hci) || adapter=0
 
-
 # start bluetoothd if bluetoothd is not running
 if ! ( ps -fC bluetoothd >/dev/null ) ; then
    echo bluetoothd not running! Starting bluetoothd...
