@@ -51,17 +51,16 @@ function pushover_snooze {
 
 
 function get_ns_bg {
-    #openaps get-ns-glucose > /dev/null
     # update 24h glucose file if it's 55m old or too small to calculate COB
     if ! file_is_recent cgm/ns-glucose-24h.json 54 \
-        || ! grep -c glucose cgm/ns-glucose-24h.json | jq -e '. > 36' >/dev/null; then
-        nightscout ns $NIGHTSCOUT_HOST $API_SECRET oref0_glucose_since -24hours > cgm/ns-glucose-24h.json
-        echo Downloaded 24 hours of glucose - file:
-        ls -l cgm/ns-glucose-24h.json
+        || ! jq . cgm/ns-glucose-24h.json | grep -c glucose | jq -e '. > 36' >/dev/null; then
+        #nightscout ns $NIGHTSCOUT_HOST $API_SECRET oref0_glucose_since -24hours > cgm/ns-glucose-24h.json
+        cp cgm/ns-glucose-24h.json cgm/ns-glucose-24h-temp.json
+        oref0-get-ns-entries cgm/ns-glucose-24h-temp.json $NIGHTSCOUT_HOST $API_SECRET 24 2>&1 >cgm/ns-glucose-24h.json
     fi
-    nightscout ns $NIGHTSCOUT_HOST $API_SECRET oref0_glucose_since -1hour > cgm/ns-glucose-1h.json
-    echo Downloaded 1 hours of glucose - file:
-    ls -l cgm/ns-glucose-1h.json
+    #nightscout ns $NIGHTSCOUT_HOST $API_SECRET oref0_glucose_since -1hour > cgm/ns-glucose-1h.json
+    cp cgm/ns-glucose-1h.json cgm/ns-glucose-1h-temp.json
+    oref0-get-ns-entries cgm/ns-glucose-1h-temp.json $NIGHTSCOUT_HOST $API_SECRET 1 2>&1 >cgm/ns-glucose-1h.json
 
     jq -s '.[0] + .[1]|unique|sort_by(.date)|reverse' cgm/ns-glucose-24h.json cgm/ns-glucose-1h.json > cgm/ns-glucose.json
 
@@ -195,9 +194,9 @@ function upload_ns_status {
 # ns-status monitor/clock-zoned.json monitor/iob.json enact/suggested.json enact/enacted.json monitor/battery.json monitor/reservoir.json monitor/status.json --uploader monitor/edison-battery.json > upload/ns-status.json
 function format_ns_status {
     if [ -s monitor/edison-battery.json ]; then
-        ns-status monitor/clock-zoned.json monitor/iob.json enact/suggested.json enact/enacted.json monitor/battery.json monitor/reservoir.json monitor/status.json --uploader monitor/edison-battery.json > upload/ns-status.json
+        ns-status monitor/clock-zoned.json monitor/iob.json enact/suggested.json enact/enacted.json monitor/battery.json monitor/reservoir.json monitor/status.json --preferences preferences.json --uploader monitor/edison-battery.json > upload/ns-status.json
     else
-        ns-status monitor/clock-zoned.json monitor/iob.json enact/suggested.json enact/enacted.json monitor/battery.json monitor/reservoir.json monitor/status.json > upload/ns-status.json
+        ns-status monitor/clock-zoned.json monitor/iob.json enact/suggested.json enact/enacted.json monitor/battery.json monitor/reservoir.json monitor/status.json --preferences preferences.json > upload/ns-status.json
     fi
 }
 
