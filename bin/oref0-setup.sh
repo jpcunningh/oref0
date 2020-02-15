@@ -892,6 +892,7 @@ if prompt_yn "" N; then
     if [[ ! -z "$BT_PEB" || ! -z "$BT_MAC" || ! -z $BLE_SERIAL || ! -z $DEXCOM_CGM_TX_ID ]]; then
         # Install Bluez for BT Tethering
         echo Checking bluez installation
+        PATH=$PATH:/usr/libexec/bluetooth # Add alternate bluetooth locations to path
         bluetoothdversion=$(bluetoothd --version || 0)
         # use packaged bluez with Debian Stretch (Jubilinux 0.3.0 and Raspbian)
         bluetoothdminversion=5.43
