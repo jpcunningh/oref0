@@ -35,8 +35,8 @@ configure_archived_debian_repos
 
 apt-get install -y sudo
 sudo apt-get update && sudo apt-get -y upgrade
-## Debian Bullseye (Raspberry Pi OS 64bit, etc) is python3 by default and does not support python2-pip.
-if ! cat /etc/os-release | grep bullseye >& /dev/null; then
+## Debian Bullseye or later (Raspberry Pi OS 64bit, etc) is python3 by default and does not support python2-pip.
+if [[ "$(. /etc/os-release && echo "${VERSION_ID:-0}")" -lt 11 ]]; then
    sudo apt-get install -y git python python-dev software-properties-common python-numpy python-pip watchdog strace tcpdump screen acpid vim locate lm-sensors || die "Couldn't install packages"
 else
    # Bullseye based OS. Get PIP2 from pypa and pip-install python packages rather than using the py3 ones from apt
