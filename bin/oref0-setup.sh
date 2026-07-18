@@ -1239,11 +1239,11 @@ EOF
         rm -rf /usr/local/go/*
         echo "Installing Golang..."
         if uname -m | grep armv; then
-            cd /tmp && wget -c https://storage.googleapis.com/golang/go${golangversion}.linux-armv6l.tar.gz && tar -C /usr/local -xzvf /tmp/go${golangversion}.linux-armv6l.tar.gz
+            cd /tmp && wget -c https://go.dev/dl/go${golangversion}.linux-armv6l.tar.gz && tar -C /usr/local -xzvf /tmp/go${golangversion}.linux-armv6l.tar.gz
         elif uname -m | grep aarch64; then
-            cd /tmp && wget -c https://storage.googleapis.com/golang/go${golangversion}.linux-arm64.tar.gz && tar -C /usr/local -xzvf /tmp/go${golangversion}.linux-arm64.tar.gz
+            cd /tmp && wget -c https://go.dev/dl/go${golangversion}.linux-arm64.tar.gz && tar -C /usr/local -xzvf /tmp/go${golangversion}.linux-arm64.tar.gz
         elif uname -m | grep i686; then
-            cd /tmp && wget -c https://dl.google.com/go/go${golangversion}.linux-386.tar.gz && tar -C /usr/local -xzvf /tmp/go${golangversion}.linux-386.tar.gz
+            cd /tmp && wget -c https://go.dev/dl/go${golangversion}.linux-386.tar.gz && tar -C /usr/local -xzvf /tmp/go${golangversion}.linux-386.tar.gz
         fi
     fi
     if ! grep GOROOT $HOME/.bash_profile; then
