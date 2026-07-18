@@ -193,12 +193,9 @@ function bt_connect {
                 || ! jq -e .bt_offline < preferences.json > /dev/null \
                 || ! ifconfig | egrep -q "bnep0" >/dev/null; then
                 echo "Attempting to connect to bt $MAC..."
-                sudo bt-pan -i $hci_address client $MAC -d
-              for i in {1..3}
-              do
-                sudo bt-pan -i $hci_address client $MAC
+                sudo bt-network --connect $MAC nap &
+                sleep 1
                 sudo dhclient bnep0
-              done
                 if ! has_ip bnep0; then
                   bt_bnep0_cycle
                 fi
@@ -232,10 +229,7 @@ function bt_connect {
 function bt_disconnect {
     echo "Disconnecting BT $MAC"
     ifdown bnep0
-    # loop over as many MACs as are provided as arguments
-    for MAC; do
-        sudo bt-pan -i $hci_address client $MAC -d
-    done
+    pkill bt-network
 }
 
 function wifi_dhcp_renew {
