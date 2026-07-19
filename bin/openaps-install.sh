@@ -76,7 +76,7 @@ fi
 
 apt-get update && apt-get -o Dpkg::Options::="--force-confdef" -y dist-upgrade && apt-get -y autoremove
 
-if [ (. /etc/os-release && echo "${VERSION_ID:-0}" -ge 12 ]; then
+if [ $(. /etc/os-release && echo "${VERSION_ID:-0}") -ge 12 ]; then
     apt-get update && apt-get install -y sudo strace tcpdump screen acpid vim locate ntpsec ntpsec-ntpdate
 else
     apt-get update && apt-get install -y sudo strace tcpdump screen acpid vim locate ntpdate ntp
