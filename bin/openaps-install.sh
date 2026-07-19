@@ -75,7 +75,12 @@ if cat /etc/os-release | grep 'PRETTY_NAME="Debian GNU/Linux 9 (stretch)"' &> /d
 fi
 
 apt-get update && apt-get -o Dpkg::Options::="--force-confdef" -y dist-upgrade && apt-get -y autoremove
-apt-get update && apt-get install -y sudo strace tcpdump screen acpid vim locate ntpdate ntp
+
+if [ (. /etc/os-release && echo "${VERSION_ID:-0}" -ge 12 ]; then
+    apt-get update && apt-get install -y sudo strace tcpdump screen acpid vim locate ntpsec ntpsec-ntpdate
+else
+    apt-get update && apt-get install -y sudo strace tcpdump screen acpid vim locate ntpdate ntp
+fi
 #check if edison user exists before trying to add it to groups
 
 grep "PermitRootLogin yes" /etc/ssh/sshd_config || echo "PermitRootLogin yes" >>/etc/ssh/sshd_config
