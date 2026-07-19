@@ -38,7 +38,7 @@ sudo apt-get update && sudo apt-get -y upgrade
 ## Debian Bullseye (Raspberry Pi OS 64bit, etc) is python3 by default and does not support python2-pip.
 if [ $(. /etc/os-release && echo "${VERSION_ID:-0}") -ge 12 ]; then
   # Bookworm or higher - no python2
-   sudo apt-get install -y git python3 python-is-python3 python3-pi python3-numpy python3-dev python-dev-is-python3 software-properties-common watchdog strace tcpdump screen acpid vim locate lm-sensors || die "Couldn't install packages"
+   sudo apt-get install -y git python3 python-is-python3 python3-pip python3-numpy python3-dev python-dev-is-python3 watchdog strace tcpdump screen acpid vim locate lm-sensors || die "Couldn't install packages"
 elif ! cat /etc/os-release | grep bullseye >& /dev/null; then
    sudo apt-get install -y git python python-dev software-properties-common python-numpy python-pip watchdog strace tcpdump screen acpid vim locate lm-sensors || die "Couldn't install packages"
 else
